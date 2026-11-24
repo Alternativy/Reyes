@@ -862,8 +862,7 @@
         document.fonts.ready.then(drawBackdrop);
       }
 
-      // Carga con CORS habilitado desde Wikimedia Commons (Tanque de agua de Monte Grande)
-      const fileTitle = 'File:Monte_grande_tanque_de_agua_de_la_plaza_Enrique_Santamarina_-_Diaz_De_Vivar_Gustavo.jpg';
+      // Imagen de fondo local incluida en el repositorio.
       const fallbackImageUrl = 'https://commons.wikimedia.org/wiki/Special:FilePath/Monte_grande_tanque_de_agua_de_la_plaza_Enrique_Santamarina_-_Diaz_De_Vivar_Gustavo.jpg?width=1600';
 
       const loadExternalPhoto = (url) => {
@@ -881,17 +880,7 @@
         img.src = url;
       };
 
-      fetch(`https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(fileTitle)}&prop=imageinfo&iiprop=url&iiurlwidth=1600&format=json&origin=*`)
-        .then((res) => res.json())
-        .then((data) => {
-          const pages = data?.query?.pages || {};
-          const page = Object.values(pages)[0];
-          const directUrl = page?.imageinfo?.[0]?.thumburl || page?.imageinfo?.[0]?.url || fallbackImageUrl;
-          loadExternalPhoto(directUrl);
-        })
-        .catch(() => {
-          loadExternalPhoto(fallbackImageUrl);
-        });
+      loadExternalPhoto('./tanque.webp');
 
       return texture;
     }
