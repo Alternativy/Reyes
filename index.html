@@ -691,8 +691,10 @@
 
       // 2. CRISTALES ÓPTICOS CURVOS (Izquierdo y Derecho)
       const rightLens = new THREE.Mesh(createCurvedLensGeometry(1, style), materials.lens);
+      rightLens.name = 'rightLens';
       rightLens.position.z = -0.01;
       const leftLens = new THREE.Mesh(createCurvedLensGeometry(-1, style), materials.lens);
+      leftLens.name = 'leftLens';
       leftLens.position.z = -0.01;
       root.add(rightLens, leftLens);
 
@@ -788,45 +790,51 @@
      * Incluye respaldo inmediato en alabastro mientras descarga la foto.
      */
     function createBackdropTextTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 2048;
-      canvas.height = 1024;
-      const ctx = canvas.getContext('2d');
+      const makeCanvas = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 2048;
+        canvas.height = 1024;
+        return canvas;
+      };
 
-      const texture = new THREE.CanvasTexture(canvas);
-      texture.colorSpace = THREE.SRGBColorSpace;
+      const sharpCanvas = makeCanvas();
+      const blurCanvas = makeCanvas();
+      const sharpCtx = sharpCanvas.getContext('2d');
+      const blurCtx = blurCanvas.getContext('2d');
+      const sharpTexture = new THREE.CanvasTexture(sharpCanvas);
+      const blurTexture = new THREE.CanvasTexture(blurCanvas);
+      sharpTexture.colorSpace = THREE.SRGBColorSpace;
+      blurTexture.colorSpace = THREE.SRGBColorSpace;
 
       let loadedPhoto = null;
 
-      const drawBackdrop = () => {
+      const drawToContext = (ctx) => {
         ctx.save();
         if (loadedPhoto) {
-          // Ajuste tipo "cover" centrado en la silueta del tanque de agua de Monte Grande
           const imgRatio = loadedPhoto.width / loadedPhoto.height;
-          const canvasRatio = canvas.width / canvas.height;
+          const canvasRatio = sharpCanvas.width / sharpCanvas.height;
           let drawW, drawH, offsetX, offsetY;
 
           if (imgRatio > canvasRatio) {
-            drawH = canvas.height;
-            drawW = canvas.height * imgRatio;
-            offsetX = (canvas.width - drawW) * 0.5;
+            drawH = sharpCanvas.height;
+            drawW = sharpCanvas.height * imgRatio;
+            offsetX = (sharpCanvas.width - drawW) * 0.5;
             offsetY = 0;
           } else {
-            drawW = canvas.width;
-            drawH = canvas.width / imgRatio;
+            drawW = sharpCanvas.width;
+            drawH = sharpCanvas.width / imgRatio;
             offsetX = 0;
-            offsetY = (canvas.height - drawH) * 0.36;
+            offsetY = (sharpCanvas.height - drawH) * 0.36;
           }
 
           ctx.drawImage(loadedPhoto, offsetX, offsetY, drawW, drawH);
 
-          // Veladura atmosférica suave para realzar el contraste con las letras blancas
-          const shade = ctx.createLinearGradient(0, 0, 0, canvas.height);
+          const shade = ctx.createLinearGradient(0, 0, 0, sharpCanvas.height);
           shade.addColorStop(0, 'rgba(18, 18, 16, 0.22)');
           shade.addColorStop(0.5, 'rgba(18, 18, 16, 0.32)');
           shade.addColorStop(1, 'rgba(18, 18, 16, 0.45)');
           ctx.fillStyle = shade;
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillRect(0, 0, sharpCanvas.width, sharpCanvas.height);
 
           ctx.fillStyle = '#FFFFFF';
           ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
@@ -834,20 +842,32 @@
           ctx.shadowOffsetY = 6;
         } else {
           ctx.fillStyle = '#F5F5F3';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillRect(0, 0, sharpCanvas.width, sharpCanvas.height);
           ctx.fillStyle = '#141414';
         }
 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.font = '600 132px "Playfair Display", Georgia, serif';
-        if ('letterSpacing' in ctx) {
-          ctx.letterSpacing = '18px';
-        }
-        ctx.fillText('ÓPTICA REYES', canvas.width / 2, canvas.height / 2);
+        if ('letterSpacing' in ctx) ctx.letterSpacing = '18px';
+        ctx.fillText('ÓPTICA REYES', sharpCanvas.width / 2, sharpCanvas.height / 2);
         ctx.restore();
+      };
 
-        texture.needsUpdate = true;
+      const drawBackdrop = () => {
+        // Sharp version is visible only through the lens-shaped focus mask.
+        sharpCtx.clearRect(0, 0, sharpCanvas.width, sharpCanvas.height);
+        drawToContext(sharpCtx);
+
+        // A subtle Gaussian blur is used everywhere outside the lenses.
+        blurCtx.save();
+        blurCtx.filter = 'blur(9px)';
+        blurCtx.clearRect(0, 0, blurCanvas.width, blurCanvas.height);
+        drawToContext(blurCtx);
+        blurCtx.restore();
+
+        sharpTexture.needsUpdate = true;
+        blurTexture.needsUpdate = true;
       };
 
       drawBackdrop();
@@ -855,9 +875,7 @@
         document.fonts.ready.then(drawBackdrop);
       }
 
-      // Imagen de fondo local incluida en el repositorio.
       const fallbackImageUrl = 'https://commons.wikimedia.org/wiki/Special:FilePath/Monte_grande_tanque_de_agua_de_la_plaza_Enrique_Santamarina_-_Diaz_De_Vivar_Gustavo.jpg?width=1600';
-
       const loadExternalPhoto = (url) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
@@ -866,18 +884,14 @@
           drawBackdrop();
         };
         img.onerror = () => {
-          if (url !== fallbackImageUrl) {
-            loadExternalPhoto(fallbackImageUrl);
-          }
+          if (url !== fallbackImageUrl) loadExternalPhoto(fallbackImageUrl);
         };
         img.src = url;
       };
 
       loadExternalPhoto('./tanque-v2.jpg');
-
-      return texture;
+      return { sharpTexture, blurTexture };
     }
-
     /**
      * Genera una textura procedural de acetato Carey (tortoiseshell) con vetas cálidas
      * ámbar, miel y marrón profundo para el acabado clásico del armazón.
@@ -991,6 +1005,7 @@
 
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         renderer.setSize(w, h);
+        focusUniforms.resolution.value.set(w, h);
       };
       updateCameraLayout();
 
@@ -1011,11 +1026,52 @@
       scene.add(rimLight);
 
       // PLANO DE FONDO CON FOTO DE MONTE GRANDE Y "ÓPTICA REYES" DETRÁS DE LAS PATILLAS
-      const backdropTexture = createBackdropTextTexture();
+      const backdropTextures = createBackdropTextTexture();
       const backdropGeo = new THREE.PlaneGeometry(11.6, 5.8);
-      const backdropMat = new THREE.MeshBasicMaterial({
-        map: backdropTexture,
-        toneMapped: false
+      const focusUniforms = {
+        sharpMap: { value: backdropTextures.sharpTexture },
+        blurMap: { value: backdropTextures.blurTexture },
+        resolution: { value: new THREE.Vector2(initialWidth, initialHeight) },
+        lensA: { value: new THREE.Vector4(0.38, 0.5, 0.1, 0.16) },
+        lensB: { value: new THREE.Vector4(0.62, 0.5, 0.1, 0.16) },
+        feather: { value: 0.13 }
+      };
+      const backdropMat = new THREE.ShaderMaterial({
+        uniforms: focusUniforms,
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D sharpMap;
+          uniform sampler2D blurMap;
+          uniform vec2 resolution;
+          uniform vec4 lensA;
+          uniform vec4 lensB;
+          uniform float feather;
+          varying vec2 vUv;
+
+          float lensFocus(vec2 point, vec4 lens) {
+            vec2 delta = (point - lens.xy) / max(lens.zw, vec2(0.0001));
+            float distanceFromCenter = length(delta);
+            return 1.0 - smoothstep(1.0 - feather, 1.0 + feather, distanceFromCenter);
+          }
+
+          void main() {
+            vec2 screenPoint = gl_FragCoord.xy / resolution;
+            float focus = max(lensFocus(screenPoint, lensA), lensFocus(screenPoint, lensB));
+            vec4 blurred = texture2D(blurMap, vUv);
+            vec4 sharp = texture2D(sharpMap, vUv);
+            gl_FragColor = mix(blurred, sharp, focus);
+            #include <tonemapping_fragment>
+            #include <colorspace_fragment>
+          }
+        `,
+        depthWrite: true,
+        depthTest: true
       });
       const backdropMesh = new THREE.Mesh(backdropGeo, backdropMat);
       backdropMesh.position.set(0, 0.04, -3.65);
@@ -1268,6 +1324,55 @@
       // Ajuste responsivo al cambiar el tamaño de la ventana
       window.addEventListener('resize', updateCameraLayout);
 
+      const lensBounds = new THREE.Box3();
+      const lensCorner = new THREE.Vector3();
+      const projected = new THREE.Vector3();
+
+      const updateLensFocusMask = () => {
+        glassesGroup.updateMatrixWorld(true);
+        camera.updateMatrixWorld();
+
+        const projectLens = (lensName, uniform) => {
+          const lens = glassesGroup.getObjectByName(lensName);
+          if (!lens || !lens.visible) return;
+          lens.geometry.computeBoundingBox();
+          lensBounds.copy(lens.geometry.boundingBox);
+
+          const min = lensBounds.min;
+          const max = lensBounds.max;
+          const corners = [
+            [min.x, min.y, min.z], [min.x, max.y, min.z],
+            [max.x, min.y, min.z], [max.x, max.y, min.z],
+            [min.x, min.y, max.z], [min.x, max.y, max.z],
+            [max.x, min.y, max.z], [max.x, max.y, max.z]
+          ];
+
+          let minX = 1, minY = 1, maxX = 0, maxY = 0;
+          corners.forEach(([x, y, z]) => {
+            projected.set(x, y, z).applyMatrix4(lens.matrixWorld).project(camera);
+            const sx = projected.x * 0.5 + 0.5;
+            const sy = projected.y * 0.5 + 0.5;
+            minX = Math.min(minX, sx);
+            maxX = Math.max(maxX, sx);
+            minY = Math.min(minY, sy);
+            maxY = Math.max(maxY, sy);
+          });
+
+          uniform.value.set(
+            (minX + maxX) * 0.5,
+            (minY + maxY) * 0.5,
+            Math.max((maxX - minX) * 0.5, 0.001),
+            Math.max((maxY - minY) * 0.5, 0.001)
+          );
+        };
+
+        const activeGroup = modelGroups[activeModelIdx];
+        if (activeGroup) {
+          projectLens('leftLens', focusUniforms.lensA);
+          projectLens('rightLens', focusUniforms.lensB);
+        }
+      };
+
       // BUCLE DE ANIMACIÓN: PANEO CADA 5s + ROTACIÓN HORIZONTAL CONTINUA + PARALLAX
       const clock = new THREE.Clock();
       let loaderHidden = false;
@@ -1344,6 +1449,7 @@
         glassesGroup.rotation.x = parallaxX + currentDragX + Math.sin(elapsed * 0.4) * 0.025;
         glassesGroup.position.y = Math.sin(elapsed * 0.9) * 0.03;
 
+        updateLensFocusMask();
         renderer.render(scene, camera);
 
         // Ocultar el loader en el primer frame renderizado
