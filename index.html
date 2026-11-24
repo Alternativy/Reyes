@@ -1005,7 +1005,6 @@
 
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         renderer.setSize(w, h);
-        focusUniforms.resolution.value.set(w, h);
       };
       updateCameraLayout();
 
@@ -1329,11 +1328,12 @@
       const projected = new THREE.Vector3();
 
       const updateLensFocusMask = () => {
+        renderer.getDrawingBufferSize(focusUniforms.resolution.value);
         glassesGroup.updateMatrixWorld(true);
         camera.updateMatrixWorld();
 
         const projectLens = (lensName, uniform) => {
-          const lens = glassesGroup.getObjectByName(lensName);
+          const lens = activeGroup.getObjectByName(lensName);
           if (!lens || !lens.visible) return;
           lens.geometry.computeBoundingBox();
           lensBounds.copy(lens.geometry.boundingBox);
