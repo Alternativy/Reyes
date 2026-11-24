@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Óptica Reyes Bs As — Armazones, Lentes de Sol y Lentes de Contacto</title>
+  <meta name="description" content="Óptica Reyes Bs As en Monte Grande. Armazones, Lentes de Sol y Lentes de Contacto. La mejor variedad al mejor precio." />
+
+  <!-- Google Fonts: Playfair Display (Editorial Serif) & Plus Jakarta Sans (UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            alabaster: '#F5F5F3',
+            charcoal: '#141414',
+            optical: '#1A3A32',
+            champagne: '#B89768',
+            stoneSoft: '#E6E4DF'
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Three.js Import Map (ES Modules via jsDelivr, sin errores CORS) -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <style>
+    /* Estilos base editoriales y animaciones sutiles */
+    html, body {
+      background-color: #F5F5F3;
+      color: #141414;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #hero-canvas-container canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      touch-action: pan-y;
+    }
+
+    #hero-canvas-container canvas:active {
+      cursor: grabbing;
+    }
+
+    /* Animación de revelado al hacer scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Glassmorphism sutil para controles sobre el Hero */
+    .glass-pill {
+      background: rgba(245, 245, 243, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(20, 20, 20, 0.09);
+    }
+
+    /* Indicador de scroll animado */
+    @keyframes scrollPulse {
+      0%, 100% { transform: translateY(0); opacity: 0.45; }
+      50% { transform: translateY(6px); opacity: 1; }
+    }
+    .scroll-dot {
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+
+    /* Barra de navegación al hacer scroll */
+    .nav-scrolled {
+      background: rgba(245, 245, 243, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(20, 20, 20, 0.07);
+    }
+  </style>
+</head>
+<body class="bg-alabaster text-charcoal selection:bg-optical selection:text-alabaster">
+
+  <!-- ==================== NAVBAR FIJA Y MINIMALISTA ==================== -->
+  <header id="navbar" class="fixed top-0 inset-x-0 z-50 bg-alabaster/80 backdrop-blur-md border-b border-charcoal/5 transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 h-20 flex items-center justify-between">
+      <!-- Marca -->
+      <a href="#inicio" class="group flex items-center gap-3 focus:outline-none">
+        <!-- Isotipo vectorial Óptica Reyes -->
+        <svg class="w-11 h-9 shrink-0 transition-transform duration-300 group-hover:scale-105" viewBox="30 12 245 190" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <clipPath id="nav-brow-clip">
+              <path d="M44 74 C76 32, 148 16, 224 52 C156 30, 86 44, 54 83 Z" />
+            </clipPath>
+            <clipPath id="nav-eye-clip">
+              <path d="M58 102 C88 70, 152 70, 182 96 C152 126, 88 128, 58 102 Z" />
+            </clipPath>
+          </defs>
+          <!-- Ceja con tramado diagonal -->
+          <path d="M44 74 C76 32, 148 16, 224 52 C156 30, 86 44, 54 83 Z" stroke="#141414" stroke-width="2.2" stroke-linejoin="round" />
+          <g clip-path="url(#nav-brow-clip)" stroke="#141414" stroke-width="1.6">
+            <line x1="42" y1="88" x2="64" y2="48" /><line x1="52" y1="86" x2="74" y2="42" />
+            <line x1="62" y1="82" x2="84" y2="36" /><line x1="72" y1="78" x2="94" y2="30" />
+            <line x1="82" y1="74" x2="104" y2="24" /><line x1="92" y1="70" x2="114" y2="20" />
+            <line x1="102" y1="66" x2="124" y2="16" /><line x1="112" y1="62" x2="134" y2="14" />
+            <line x1="122" y1="60" x2="144" y2="14" /><line x1="132" y1="58" x2="154" y2="16" />
+            <line x1="142" y1="56" x2="164" y2="18" /><line x1="152" y1="56" x2="174" y2="22" />
+            <line x1="162" y1="56" x2="184" y2="26" /><line x1="172" y1="56" x2="194" y2="30" />
+            <line x1="182" y1="56" x2="202" y2="34" /><line x1="192" y1="56" x2="210" y2="38" />
+            <line x1="202" y1="56" x2="218" y2="44" />
+          </g>
+          <!-- Iris multicolor y pupila -->
+          <g clip-path="url(#nav-eye-clip)">
+            <circle cx="120" cy="98" r="27" fill="#0EA5E9" />
+            <path d="M120 98 L120 70 A28 28 0 0 1 139 78 Z" fill="#2563EB" />
+            <path d="M120 98 L139 78 A28 28 0 0 1 148 98 Z" fill="#7C3AED" />
+            <path d="M120 98 L148 98 A28 28 0 0 1 139 118 Z" fill="#DB2777" />
+            <path d="M120 98 L139 118 A28 28 0 0 1 120 126 Z" fill="#DC2626" />
+            <path d="M120 98 L120 126 A28 28 0 0 1 100 118 Z" fill="#EA580C" />
+            <path d="M120 98 L100 118 A28 28 0 0 1 92 98 Z" fill="#EAB308" />
+            <path d="M120 98 L92 98 A28 28 0 0 1 100 78 Z" fill="#16A34A" />
+            <path d="M120 98 L100 78 A28 28 0 0 1 120 70 Z" fill="#06B6D4" />
+            <circle cx="120" cy="98" r="26.5" stroke="#141414" stroke-width="1.4" />
+            <circle cx="120" cy="98" r="11.5" fill="#141414" />
+          </g>
+          <!-- Contorno del ojo -->
+          <path d="M58 102 C88 70, 152 70, 182 96 C152 126, 88 128, 58 102 Z" stroke="#141414" stroke-width="2.2" stroke-linejoin="round" />
+          <!-- Pestañas punteadas siguiendo la caída del rabillo -->
+          <g fill="#141414">
+            <circle cx="66" cy="88" r="1.4" /><circle cx="75" cy="81" r="1.6" />
+            <circle cx="85" cy="75" r="1.8" /><circle cx="96" cy="70" r="2.0" />
+            <circle cx="108" cy="67" r="2.2" /><circle cx="120" cy="66" r="2.3" />
+            <circle cx="132" cy="67" r="2.4" /><circle cx="144" cy="70" r="2.5" />
+            <circle cx="156" cy="74" r="2.6" /><circle cx="167" cy="80" r="2.7" />
+            <circle cx="177" cy="87" r="2.7" /><circle cx="187" cy="94" r="2.5" />
+            <circle cx="196" cy="100" r="2.2" /><circle cx="205" cy="105" r="1.8" />
+            <circle cx="74" cy="116" r="1.2" /><circle cx="86" cy="122" r="1.3" />
+            <circle cx="98" cy="126" r="1.4" /><circle cx="111" cy="128" r="1.5" />
+            <circle cx="124" cy="128" r="1.5" /><circle cx="137" cy="126" r="1.4" />
+            <circle cx="150" cy="122" r="1.3" /><circle cx="162" cy="116" r="1.2" />
+          </g>
+          <!-- Curvas del delineado respetando la orientación y sentido de giro original -->
+          <g stroke="#141414" stroke-width="2.1" stroke-linecap="round" fill="none">
+            <!-- Superior derecha: cae hacia la derecha y gira hacia arriba (antihorario) -->
+            <path d="M182 96 C204 102, 224 120, 244 114 C254 110, 255 95, 244 90 C236 87, 230 94, 235 100" />
+            <!-- Media derecha: fluye hacia afuera y gira hacia abajo/adentro (horario) -->
+            <path d="M182 96 C204 112, 226 120, 248 130 C262 137, 263 154, 249 158 C239 160, 234 150, 242 145" />
+            <!-- Inferior larga: desciende casi vertical, abre a la derecha y gira hacia arriba (antihorario) -->
+            <path d="M182 96 C200 118, 206 148, 211 174 C215 194, 236 202, 246 190 C253 181, 246 168, 235 172 C230 174, 231 181, 236 181" />
+            <!-- Inferior izquierda mediana: baja arqueando a la derecha y gira hacia arriba/derecha (horario) -->
+            <path d="M182 96 C194 114, 200 138, 190 152 C182 162, 168 158, 169 147 C170 140, 178 139, 181 145" />
+            <!-- Superior izquierda pequeña: cae hacia la izquierda y gira hacia la derecha/arriba (antihorario) -->
+            <path d="M182 96 C181 110, 166 118, 166 130 C166 138, 177 141, 181 133 C183 128, 178 124, 174 127" />
+          </g>
+        </svg>
+        <span class="font-serif text-lg sm:text-xl tracking-[0.14em] uppercase font-medium text-charcoal">
+          Óptica Reyes
+        </span>
+      </a>
+
+      <!-- Enlaces Desktop -->
+      <nav class="hidden md:flex items-center gap-10 text-xs uppercase tracking-[0.18em] font-medium text-charcoal/75">
+        <a href="#inicio" class="hover:text-optical transition-colors duration-300">Inicio</a>
+        <a href="#ubicacion" class="hover:text-optical transition-colors duration-300">Ubicación</a>
+        <a href="#contacto" class="hover:text-optical transition-colors duration-300">Contacto</a>
+      </nav>
+
+      <!-- Menú Mobile -->
+      <div class="flex items-center gap-3 md:hidden">
+        <button id="mobile-menu-btn" aria-label="Abrir menú" class="p-2.5 rounded-full border border-charcoal/15 text-charcoal hover:bg-charcoal/5 transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 7h16M4 17h16" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Drawer Mobile -->
+    <div id="mobile-menu" class="hidden md:hidden bg-alabaster/95 backdrop-blur-xl border-b border-charcoal/10 px-6 py-6">
+      <div class="flex flex-col gap-5 text-sm uppercase tracking-[0.16em] font-medium">
+        <a href="#inicio" class="mobile-link py-1 text-charcoal/80 hover:text-optical">Inicio</a>
+        <a href="#ubicacion" class="mobile-link py-1 text-charcoal/80 hover:text-optical">Ubicación</a>
+        <a href="#contacto" class="mobile-link py-1 text-charcoal/80 hover:text-optical">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== HERO 100vh CON ESCENA THREE.JS ==================== -->
+  <section id="inicio" class="relative w-full h-[100svh] min-h-[640px] flex flex-col justify-between overflow-hidden bg-alabaster">
+
+    <!-- Contenedor WebGL Three.js -->
+    <div id="hero-canvas-container" class="absolute inset-0 z-10"></div>
+
+    <!-- Fallback / Loader discreto -->
+    <div id="webgl-loader" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-alabaster transition-opacity duration-700 pointer-events-none">
+      <div class="w-8 h-8 rounded-full border border-charcoal/20 border-t-optical animate-spin mb-4"></div>
+      <p class="text-[11px] uppercase tracking-[0.25em] text-charcoal/60">Cargando</p>
+    </div>
+
+    <!-- Mensaje de error amigable si WebGL no está disponible -->
+    <div id="webgl-fallback" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center bg-alabaster">
+      <p class="font-serif text-5xl sm:text-7xl tracking-[0.12em] uppercase text-charcoal">Óptica Reyes</p>
+      <p class="mt-4 text-sm text-charcoal/65 max-w-md">La mejor variedad al mejor precio · Monte Grande, Buenos Aires.</p>
+    </div>
+
+    <!-- Espaciador superior para el navbar -->
+    <div class="relative z-20 pt-24 px-5 sm:px-8 pointer-events-none flex justify-between items-start max-w-7xl w-full mx-auto">
+      <div class="hidden sm:flex glass-pill rounded-full px-4 py-1.5 items-center gap-2.5 text-[11px] uppercase tracking-[0.22em] text-charcoal/80 shadow-sm">
+        <span class="inline-block w-5 h-[1px] bg-charcoal/40"></span>
+        <span>Monte Grande · Buenos Aires</span>
+      </div>
+    </div>
+
+    <!-- UI Inferior del Hero (Controles de acabado + lema verificado + scroll) -->
+    <div class="relative z-20 w-full max-w-7xl mx-auto px-5 sm:px-8 pb-6 sm:pb-9 pointer-events-none">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+
+        <!-- Lema verificado -->
+        <div class="pointer-events-auto glass-pill rounded-2xl px-5 py-3.5 max-w-sm shadow-sm">
+          <p class="text-xs uppercase tracking-[0.22em] text-optical font-semibold mb-1">
+            Óptica Reyes
+          </p>
+          <p class="text-sm sm:text-[15px] leading-relaxed text-charcoal/85 font-normal">
+            La mejor variedad al mejor precio.
+          </p>
+        </div>
+
+        <!-- Selector Interactivo en Vivo (Acabado del Armazón + Tipo de Cristal) -->
+        <div class="pointer-events-auto flex flex-col sm:flex-row items-start sm:items-center gap-2.5">
+
+          <!-- Píldoras de Acabado del Armazón -->
+          <div class="glass-pill rounded-full p-1.5 flex items-center gap-1 shadow-sm" role="group" aria-label="Acabado del armazón">
+            <button
+              data-finish="carey"
+              class="finish-btn flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-300 bg-charcoal text-alabaster"
+            >
+              <span class="w-2.5 h-2.5 rounded-full border border-white/30" style="background: radial-gradient(circle at 30% 30%, #c77d2e, #4a250d);"></span>
+              <span>Carey</span>
+            </button>
+            <button
+              data-finish="negro"
+              class="finish-btn flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-300 text-charcoal/75 hover:text-charcoal"
+            >
+              <span class="w-2.5 h-2.5 rounded-full bg-[#1a1a1c] border border-charcoal/20"></span>
+              <span>Negro Mate</span>
+            </button>
+            <button
+              data-finish="dorado"
+              class="finish-btn flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-300 text-charcoal/75 hover:text-charcoal"
+            >
+              <span class="w-2.5 h-2.5 rounded-full border border-charcoal/20" style="background: linear-gradient(135deg, #e5cf9c, #9c7a43);"></span>
+              <span>Dorado</span>
+            </button>
+          </div>
+
+          <!-- Toggle de Cristal: Claro vs Sol -->
+          <div class="glass-pill rounded-full p-1.5 flex items-center gap-1 shadow-sm" role="group" aria-label="Tipo de cristal">
+            <button
+              data-lens="claro"
+              class="lens-btn px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-300 bg-optical text-alabaster"
+            >
+              Claro
+            </button>
+            <button
+              data-lens="sol"
+              class="lens-btn px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-300 text-charcoal/75 hover:text-charcoal"
+            >
+              Sol
+            </button>
+          </div>
+        </div>
+
+        <!-- Indicador de Scroll (Desktop) -->
+        <a href="#ubicacion" aria-label="Desplazar hacia ubicación" class="hidden xl:flex pointer-events-auto glass-pill rounded-2xl px-3.5 py-2.5 flex-col items-center gap-1.5 text-charcoal/75 hover:text-optical transition-colors shadow-sm">
+          <span class="text-[10px] uppercase tracking-[0.24em]">Ubicación</span>
+          <div class="w-5 h-7 rounded-full border border-charcoal/30 flex justify-center pt-1.5">
+            <span class="scroll-dot w-1 h-1.5 rounded-full bg-optical"></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Transición orgánica: Hero (alabaster) -> Ubicación (stoneSoft) -->
+  <div class="relative w-full overflow-hidden leading-none bg-alabaster -mb-px select-none" aria-hidden="true">
+    <svg class="block w-full h-14 sm:h-20 md:h-28" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Capa trasera translúcida para dar profundidad orgánica -->
+      <path d="M0,76 C240,12 540,118 880,62 C1120,22 1310,48 1440,80 L1440,120 L0,120 Z" fill="#E6E4DF" fill-opacity="0.52" />
+      <!-- Trazo sutil dorado champagne que acompaña la curva -->
+      <path d="M0,76 C240,12 540,118 880,62 C1120,22 1310,48 1440,80" fill="none" stroke="#B89768" stroke-opacity="0.38" stroke-width="1.2" vector-effect="non-scaling-stroke" />
+      <!-- Curva orgánica principal -->
+      <path d="M0,92 C320,24 620,116 980,58 C1200,22 1350,60 1440,74 L1440,120 L0,120 Z" fill="#E6E4DF" />
+    </svg>
+  </div>
+
+  <!-- ==================== UBICACIÓN Y CONTACTO ==================== -->
+  <section id="ubicacion" class="relative py-20 sm:py-28 bg-stoneSoft">
+    <div id="contacto" class="max-w-7xl mx-auto px-5 sm:px-8">
+      <div class="reveal rounded-[2rem] bg-optical text-alabaster p-8 sm:p-14 lg:p-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center shadow-xl shadow-optical/10">
+
+        <!-- Columna Izquierda -->
+        <div class="lg:col-span-7">
+          <p class="text-xs uppercase tracking-[0.25em] text-champagne font-semibold mb-4">
+            Óptica Reyes
+          </p>
+          <h2 class="font-serif text-3xl sm:text-5xl font-normal leading-[1.12] mb-6">
+            Visitanos en Monte Grande.
+          </h2>
+          <p class="text-sm sm:text-base text-alabaster/75 leading-relaxed max-w-xl mb-9">
+            Gral. Las Heras 154, Monte Grande, Provincia de Buenos Aires (B1842).
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Gral.+Las+Heras+154,+Monte+Grande,+Provincia+de+Buenos+Aires"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2.5 rounded-full bg-alabaster text-charcoal px-7 py-4 text-xs uppercase tracking-[0.16em] font-semibold hover:bg-champagne hover:text-alabaster transition-all duration-300"
+            >
+              <span>Ver en Google Maps</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 17L17 7M7 7h10v10" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Datos verificados -->
+        <div class="lg:col-span-5 rounded-3xl bg-alabaster/[0.06] border border-alabaster/12 p-7 sm:p-8 space-y-6">
+          <div>
+            <p class="text-[11px] uppercase tracking-[0.22em] text-champagne mb-1.5">Dirección</p>
+            <p class="text-base font-medium text-alabaster">Gral. Las Heras 154</p>
+            <p class="text-sm text-alabaster/70 mt-0.5">Monte Grande, Provincia de Buenos Aires (B1842)</p>
+          </div>
+
+          <div class="h-[1px] bg-alabaster/10"></div>
+
+          <div>
+            <p class="text-[11px] uppercase tracking-[0.22em] text-champagne mb-1.5">Redes Sociales</p>
+            <div class="flex flex-col gap-2 text-sm">
+              <a href="https://www.instagram.com/opticareyesbsas/" target="_blank" rel="noopener noreferrer" class="text-alabaster/85 hover:text-champagne transition-colors">
+                Instagram · @opticareyesbsas
+              </a>
+              <a href="https://www.facebook.com/opticareyesbsas" target="_blank" rel="noopener noreferrer" class="text-alabaster/85 hover:text-champagne transition-colors">
+                Facebook · /opticareyesbsas
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mapa interactivo de Google Maps -->
+        <div class="lg:col-span-12 rounded-3xl overflow-hidden border border-alabaster/15 bg-alabaster/10 shadow-inner">
+          <iframe
+            title="Ubicación de Óptica Reyes - Gral. Las Heras 154, Monte Grande"
+            src="https://maps.google.com/maps?q=Gral.%20Las%20Heras%20154,%20Monte%20Grande,%20Buenos%20Aires&t=&z=16&ie=UTF8&iwloc=&output=embed"
+            class="w-full h-72 sm:h-80 lg:h-96 border-0 block"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Transición orgánica: Ubicación (stoneSoft) -> Footer (alabaster) -->
+  <div class="relative w-full overflow-hidden leading-none bg-stoneSoft -mb-px select-none" aria-hidden="true">
+    <svg class="block w-full h-14 sm:h-20 md:h-24" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Capa trasera translúcida asimétrica -->
+      <path d="M0,48 C280,108 620,14 960,72 C1180,110 1340,68 1440,42 L1440,120 L0,120 Z" fill="#F5F5F3" fill-opacity="0.55" />
+      <!-- Trazo sutil en verde óptico -->
+      <path d="M0,48 C280,108 620,14 960,72 C1180,110 1340,68 1440,42" fill="none" stroke="#1A3A32" stroke-opacity="0.16" stroke-width="1.2" vector-effect="non-scaling-stroke" />
+      <!-- Curva orgánica principal hacia el footer -->
+      <path d="M0,34 C340,114 720,16 1080,82 C1260,115 1370,76 1440,56 L1440,120 L0,120 Z" fill="#F5F5F3" />
+    </svg>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="relative bg-alabaster pt-8 pb-12 text-xs text-charcoal/55">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        <!-- Logo completo Óptica Reyes Bs.As. -->
+        <svg class="w-28 h-24 shrink-0" viewBox="25 10 255 268" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Óptica Reyes Bs.As. - Salud para tus ojos">
+          <defs>
+            <clipPath id="footer-brow-clip">
+              <path d="M44 74 C76 32, 148 16, 224 52 C156 30, 86 44, 54 83 Z" />
+            </clipPath>
+            <clipPath id="footer-eye-clip">
+              <path d="M58 102 C88 70, 152 70, 182 96 C152 126, 88 128, 58 102 Z" />
+            </clipPath>
+          </defs>
+          <!-- Ceja con tramado diagonal -->
+          <path d="M44 74 C76 32, 148 16, 224 52 C156 30, 86 44, 54 83 Z" stroke="#141414" stroke-width="2" stroke-linejoin="round" />
+          <g clip-path="url(#footer-brow-clip)" stroke="#141414" stroke-width="1.5">
+            <line x1="42" y1="88" x2="64" y2="48" /><line x1="52" y1="86" x2="74" y2="42" />
+            <line x1="62" y1="82" x2="84" y2="36" /><line x1="72" y1="78" x2="94" y2="30" />
+            <line x1="82" y1="74" x2="104" y2="24" /><line x1="92" y1="70" x2="114" y2="20" />
+            <line x1="102" y1="66" x2="124" y2="16" /><line x1="112" y1="62" x2="134" y2="14" />
+            <line x1="122" y1="60" x2="144" y2="14" /><line x1="132" y1="58" x2="154" y2="16" />
+            <line x1="142" y1="56" x2="164" y2="18" /><line x1="152" y1="56" x2="174" y2="22" />
+            <line x1="162" y1="56" x2="184" y2="26" /><line x1="172" y1="56" x2="194" y2="30" />
+            <line x1="182" y1="56" x2="202" y2="34" /><line x1="192" y1="56" x2="210" y2="38" />
+            <line x1="202" y1="56" x2="218" y2="44" />
+          </g>
+          <!-- Iris multicolor y pupila -->
+          <g clip-path="url(#footer-eye-clip)">
+            <circle cx="120" cy="98" r="27" fill="#0EA5E9" />
+            <path d="M120 98 L120 70 A28 28 0 0 1 139 78 Z" fill="#2563EB" />
+            <path d="M120 98 L139 78 A28 28 0 0 1 148 98 Z" fill="#7C3AED" />
+            <path d="M120 98 L148 98 A28 28 0 0 1 139 118 Z" fill="#DB2777" />
+            <path d="M120 98 L139 118 A28 28 0 0 1 120 126 Z" fill="#DC2626" />
+            <path d="M120 98 L120 126 A28 28 0 0 1 100 118 Z" fill="#EA580C" />
+            <path d="M120 98 L100 118 A28 28 0 0 1 92 98 Z" fill="#EAB308" />
+            <path d="M120 98 L92 98 A28 28 0 0 1 100 78 Z" fill="#16A34A" />
+            <path d="M120 98 L100 78 A28 28 0 0 1 120 70 Z" fill="#06B6D4" />
+            <circle cx="120" cy="98" r="26.5" stroke="#141414" stroke-width="1.3" />
+            <circle cx="120" cy="98" r="11.5" fill="#141414" />
+          </g>
+          <!-- Contorno del ojo -->
+          <path d="M58 102 C88 70, 152 70, 182 96 C152 126, 88 128, 58 102 Z" stroke="#141414" stroke-width="2" stroke-linejoin="round" />
+          <!-- Pestañas punteadas siguiendo la caída del rabillo -->
+          <g fill="#141414">
+            <circle cx="66" cy="88" r="1.4" /><circle cx="75" cy="81" r="1.6" />
+            <circle cx="85" cy="75" r="1.8" /><circle cx="96" cy="70" r="2.0" />
+            <circle cx="108" cy="67" r="2.2" /><circle cx="120" cy="66" r="2.3" />
+            <circle cx="132" cy="67" r="2.4" /><circle cx="144" cy="70" r="2.5" />
+            <circle cx="156" cy="74" r="2.6" /><circle cx="167" cy="80" r="2.7" />
+            <circle cx="177" cy="87" r="2.7" /><circle cx="187" cy="94" r="2.5" />
+            <circle cx="196" cy="100" r="2.2" /><circle cx="205" cy="105" r="1.8" />
+            <circle cx="74" cy="116" r="1.2" /><circle cx="86" cy="122" r="1.3" />
+            <circle cx="98" cy="126" r="1.4" /><circle cx="111" cy="128" r="1.5" />
+            <circle cx="124" cy="128" r="1.5" /><circle cx="137" cy="126" r="1.4" />
+            <circle cx="150" cy="122" r="1.3" /><circle cx="162" cy="116" r="1.2" />
+          </g>
+          <!-- Curvas del delineado respetando la orientación y sentido de giro original -->
+          <g stroke="#141414" stroke-width="1.9" stroke-linecap="round" fill="none">
+            <!-- Superior derecha: cae hacia la derecha y gira hacia arriba (antihorario) -->
+            <path d="M182 96 C204 102, 224 120, 244 114 C254 110, 255 95, 244 90 C236 87, 230 94, 235 100" />
+            <!-- Media derecha: fluye hacia afuera y gira hacia abajo/adentro (horario) -->
+            <path d="M182 96 C204 112, 226 120, 248 130 C262 137, 263 154, 249 158 C239 160, 234 150, 242 145" />
+            <!-- Inferior larga: desciende casi vertical, abre a la derecha y gira hacia arriba (antihorario) -->
+            <path d="M182 96 C200 118, 206 148, 211 174 C215 194, 236 202, 246 190 C253 181, 246 168, 235 172 C230 174, 231 181, 236 181" />
+            <!-- Inferior izquierda mediana: baja arqueando a la derecha y gira hacia arriba/derecha (horario) -->
+            <path d="M182 96 C194 114, 200 138, 190 152 C182 162, 168 158, 169 147 C170 140, 178 139, 181 145" />
+            <!-- Superior izquierda pequeña: cae hacia la izquierda y gira hacia la derecha/arriba (antihorario) -->
+            <path d="M182 96 C181 110, 166 118, 166 130 C166 138, 177 141, 181 133 C183 128, 178 124, 174 127" />
+          </g>
+          <!-- Tipografía oficial del logo -->
+          <text x="152" y="236" text-anchor="middle" fill="#141414" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="25" letter-spacing="0.5" textLength="226" lengthAdjust="spacingAndGlyphs">ÓPTICA REYES BS.AS.</text>
+          <text x="152" y="261" text-anchor="middle" fill="#141414" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="16" letter-spacing="0.4">Salud para tus ojos</text>
+        </svg>
+        <span class="hidden md:inline text-charcoal/30">|</span>
+        <span class="hidden md:inline">Todos los derechos reservados</span>
+      <div class="flex flex-wrap items-center justify-center sm:justify-end gap-x-6 gap-y-2">
+        <span class="text-[11px] text-charcoal/45">Foto: Tanque de Monte Grande · Gustavo Díaz de Vivar (CC BY-SA 4.0)</span>
+        <a href="https://www.instagram.com/opticareyesbsas/" target="_blank" rel="noopener noreferrer" class="hover:text-optical transition-colors">Instagram</a>
+        <a href="https://www.facebook.com/opticareyesbsas" target="_blank" rel="noopener noreferrer" class="hover:text-optical transition-colors">Facebook</a>
+        <a href="#inicio" class="hover:text-optical transition-colors">Volver arriba ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== SCRIPT PRINCIPAL: THREE.JS + UI ==================== -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    /**
+     * Genera los puntos del contorno interior de un cristal según el estilo del modelo.
+     * side = 1 para el cristal derecho (x > 0), side = -1 para el izquierdo (x < 0).
+     */
+    function createLensPath(side, style = 'panto') {
+      const s = side;
+      const path = new THREE.Path();
+
+      if (style === 'rectangular') {
+        // Silueta rectangular contemporánea con esquinas suavizadas
+        path.moveTo(s * 0.88, 0.42);
+        path.bezierCurveTo(s * 1.36, 0.42, s * 1.54, 0.36, s * 1.54, 0.04);
+        path.bezierCurveTo(s * 1.54, -0.32, s * 1.36, -0.46, s * 0.88, -0.46);
+        path.bezierCurveTo(s * 0.42, -0.46, s * 0.28, -0.32, s * 0.28, 0.04);
+        path.bezierCurveTo(s * 0.28, 0.36, s * 0.42, 0.42, s * 0.88, 0.42);
+        return path;
+      }
+
+      if (style === 'round') {
+        // Silueta redonda intelectual
+        path.moveTo(s * 0.88, 0.52);
+        path.bezierCurveTo(s * 1.26, 0.52, s * 1.48, 0.30, s * 1.48, -0.04);
+        path.bezierCurveTo(s * 1.48, -0.38, s * 1.26, -0.60, s * 0.88, -0.60);
+        path.bezierCurveTo(s * 0.50, -0.60, s * 0.28, -0.38, s * 0.28, -0.04);
+        path.bezierCurveTo(s * 0.28, 0.30, s * 0.50, 0.52, s * 0.88, 0.52);
+        return path;
+      }
+
+      // Estilo Panto/Wayfarer clásico por defecto
+      path.moveTo(s * 0.88, 0.48);
+      path.bezierCurveTo(s * 1.32, 0.48, s * 1.50, 0.35, s * 1.50, 0.05);
+      path.bezierCurveTo(s * 1.50, -0.36, s * 1.24, -0.60, s * 0.86, -0.60);
+      path.bezierCurveTo(s * 0.48, -0.60, s * 0.29, -0.34, s * 0.28, 0.05);
+      path.bezierCurveTo(s * 0.27, 0.36, s * 0.46, 0.48, s * 0.88, 0.48);
+      return path;
+    }
+
+    /**
+     * Construye una geometría de cristal óptico ligeramente curvo (menisco)
+     * con malla radial limpia para lograr una refracción física realista.
+     */
+    function createCurvedLensGeometry(side, style = 'panto', rings = 12, segments = 64) {
+      const path = createLensPath(side, style);
+      const pts = path.getSpacedPoints(segments);
+      // Calcular centroide del cristal
+      let cx = 0, cy = 0;
+      for (let i = 0; i < segments; i++) {
+        cx += pts[i].x;
+        cy += pts[i].y;
+      }
+      cx /= segments;
+      cy /= segments;
+
+      const positions = [];
+      const uvs = [];
+      const indices = [];
+
+      // Vértice central (máxima curvatura convexa hacia adelante)
+      const maxBulge = 0.095;
+      positions.push(cx, cy, maxBulge);
+      uvs.push(0.5, 0.5);
+
+      // Anillos concéntricos hacia el borde (escala 1.03 para calzar dentro del bisel del marco)
+      const edgeScale = 1.03;
+      for (let r = 1; r <= rings; r++) {
+        const t = r / rings;
+        // Perfil esférico suave
+        const z = maxBulge * (1 - t * t);
+        for (let i = 0; i < segments; i++) {
+          const px = cx + (pts[i].x - cx) * t * edgeScale;
+          const py = cy + (pts[i].y - cy) * t * edgeScale;
+          positions.push(px, py, z);
+          uvs.push(0.5 + ((px - cx) / 1.4), 0.5 + ((py - cy) / 1.2));
+        }
+      }
+
+      // Triángulos del primer anillo al centro
+      for (let i = 0; i < segments; i++) {
+        const next = (i + 1) % segments;
+        if (side > 0) {
+          indices.push(0, 1 + next, 1 + i);
+        } else {
+          indices.push(0, 1 + i, 1 + next);
+        }
+      }
+
+      // Triángulos entre anillos
+      for (let r = 1; r < rings; r++) {
+        const ringStart = 1 + (r - 1) * segments;
+        const nextRingStart = 1 + r * segments;
+        for (let i = 0; i < segments; i++) {
+          const next = (i + 1) % segments;
+          const a = ringStart + i;
+          const b = ringStart + next;
+          const c = nextRingStart + i;
+          const d = nextRingStart + next;
+          if (side > 0) {
+            indices.push(a, b, d);
+            indices.push(a, d, c);
+          } else {
+            indices.push(a, d, b);
+            indices.push(a, c, d);
+          }
+        }
+      }
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      geo.setIndex(indices);
+      geo.computeVertexNormals();
+      return geo;
+    }
+
+    /**
+     * Construye el modelo completo de los anteojos 3D procedurales según la silueta elegida:
+     * - Frente esculpido con puente cerradura (keyhole bridge) y biseles finos
+     * - Cristales curvos con MeshPhysicalMaterial (refracción real)
+     * - Patillas anatómicas con curvatura trasera
+     * - Bisagras metálicas, remaches frontales y plaquetas nasales con soporte
+     */
+    function buildGlassesModel(materials, style = 'panto') {
+      const root = new THREE.Group();
+
+      // 1. FRENTE DEL ARMAZÓN (THREE.Shape + ExtrudeGeometry)
+      const frameShape = new THREE.Shape();
+
+      if (style === 'rectangular') {
+        frameShape.moveTo(0, 0.38);
+        frameShape.bezierCurveTo(0.24, 0.38, 0.34, 0.56, 0.88, 0.56);
+        frameShape.bezierCurveTo(1.40, 0.56, 1.66, 0.52, 1.82, 0.42);
+        frameShape.bezierCurveTo(1.89, 0.37, 1.89, 0.22, 1.78, 0.17);
+        frameShape.bezierCurveTo(1.69, 0.13, 1.68, 0.04, 1.67, -0.04);
+        frameShape.bezierCurveTo(1.65, -0.42, 1.42, -0.60, 0.88, -0.60);
+        frameShape.bezierCurveTo(0.40, -0.60, 0.18, -0.38, 0.15, -0.04);
+        frameShape.bezierCurveTo(0.14, 0.08, 0.20, 0.15, 0.14, 0.22);
+        frameShape.bezierCurveTo(0.09, 0.26, 0.04, 0.27, 0, 0.27);
+
+        frameShape.bezierCurveTo(-0.04, 0.27, -0.09, 0.26, -0.14, 0.22);
+        frameShape.bezierCurveTo(-0.20, 0.15, -0.14, 0.08, -0.15, -0.04);
+        frameShape.bezierCurveTo(-0.18, -0.38, -0.40, -0.60, -0.88, -0.60);
+        frameShape.bezierCurveTo(-1.42, -0.60, -1.65, -0.42, -1.67, -0.04);
+        frameShape.bezierCurveTo(-1.68, 0.04, -1.69, 0.13, -1.78, 0.17);
+        frameShape.bezierCurveTo(-1.89, 0.22, -1.89, 0.37, -1.82, 0.42);
+        frameShape.bezierCurveTo(-1.66, 0.52, -1.40, 0.56, -0.88, 0.56);
+        frameShape.bezierCurveTo(-0.34, 0.56, -0.24, 0.38, 0, 0.38);
+      } else if (style === 'round') {
+        frameShape.moveTo(0, 0.34);
+        frameShape.bezierCurveTo(0.22, 0.34, 0.38, 0.64, 0.88, 0.64);
+        frameShape.bezierCurveTo(1.34, 0.64, 1.58, 0.46, 1.76, 0.38);
+        frameShape.bezierCurveTo(1.83, 0.34, 1.83, 0.21, 1.72, 0.17);
+        frameShape.bezierCurveTo(1.63, 0.13, 1.62, 0.04, 1.61, -0.04);
+        frameShape.bezierCurveTo(1.61, -0.46, 1.32, -0.72, 0.88, -0.72);
+        frameShape.bezierCurveTo(0.44, -0.72, 0.18, -0.44, 0.16, -0.04);
+        frameShape.bezierCurveTo(0.15, 0.09, 0.18, 0.17, 0.12, 0.22);
+        frameShape.bezierCurveTo(0.08, 0.25, 0.04, 0.26, 0, 0.26);
+
+        frameShape.bezierCurveTo(-0.04, 0.26, -0.08, 0.25, -0.12, 0.22);
+        frameShape.bezierCurveTo(-0.18, 0.17, -0.15, 0.09, -0.16, -0.04);
+        frameShape.bezierCurveTo(-0.18, -0.44, -0.44, -0.72, -0.88, -0.72);
+        frameShape.bezierCurveTo(-1.32, -0.72, -1.61, -0.46, -1.61, -0.04);
+        frameShape.bezierCurveTo(-1.62, 0.04, -1.63, 0.13, -1.72, 0.17);
+        frameShape.bezierCurveTo(-1.83, 0.21, -1.83, 0.34, -1.76, 0.38);
+        frameShape.bezierCurveTo(-1.58, 0.46, -1.34, 0.64, -0.88, 0.64);
+        frameShape.bezierCurveTo(-0.38, 0.64, -0.22, 0.34, 0, 0.34);
+      } else {
+        // Panto clásico
+        frameShape.moveTo(0, 0.42);
+        frameShape.bezierCurveTo(0.24, 0.42, 0.34, 0.62, 0.88, 0.62);
+        frameShape.bezierCurveTo(1.36, 0.62, 1.62, 0.56, 1.78, 0.46);
+        frameShape.bezierCurveTo(1.86, 0.41, 1.86, 0.25, 1.75, 0.20);
+        frameShape.bezierCurveTo(1.66, 0.16, 1.65, 0.05, 1.64, -0.04);
+        frameShape.bezierCurveTo(1.62, -0.49, 1.32, -0.75, 0.86, -0.75);
+        frameShape.bezierCurveTo(0.42, -0.75, 0.17, -0.45, 0.14, -0.04);
+        frameShape.bezierCurveTo(0.13, 0.09, 0.20, 0.16, 0.14, 0.24);
+        frameShape.bezierCurveTo(0.09, 0.29, 0.04, 0.30, 0, 0.30);
+
+        frameShape.bezierCurveTo(-0.04, 0.30, -0.09, 0.29, -0.14, 0.24);
+        frameShape.bezierCurveTo(-0.20, 0.16, -0.13, 0.09, -0.14, -0.04);
+        frameShape.bezierCurveTo(-0.17, -0.45, -0.42, -0.75, -0.86, -0.75);
+        frameShape.bezierCurveTo(-1.32, -0.75, -1.62, -0.49, -1.64, -0.04);
+        frameShape.bezierCurveTo(-1.65, 0.05, -1.66, 0.16, -1.75, 0.20);
+        frameShape.bezierCurveTo(-1.86, 0.25, -1.86, 0.41, -1.78, 0.46);
+        frameShape.bezierCurveTo(-1.62, 0.56, -1.36, 0.62, -0.88, 0.62);
+        frameShape.bezierCurveTo(-0.34, 0.62, -0.24, 0.42, 0, 0.42);
+      }
+
+      // Aberturas limpias para los cristales
+      frameShape.holes.push(createLensPath(1, style));
+      frameShape.holes.push(createLensPath(-1, style));
+
+      const frameDepth = style === 'round' ? 0.075 : 0.11;
+      const frameGeo = new THREE.ExtrudeGeometry(frameShape, {
+        depth: frameDepth,
+        bevelEnabled: true,
+        bevelThickness: style === 'round' ? 0.022 : 0.032,
+        bevelSize: style === 'round' ? 0.018 : 0.024,
+        bevelSegments: 7,
+        curveSegments: 48
+      });
+      // Centrar en Z y dar un levísimo ángulo pantoscópico elegante
+      frameGeo.translate(0, 0, -frameDepth * 0.5);
+
+      const frontFrame = new THREE.Mesh(frameGeo, materials.frame);
+      frontFrame.castShadow = true;
+      frontFrame.receiveShadow = true;
+      root.add(frontFrame);
+
+      // 2. CRISTALES ÓPTICOS CURVOS (Izquierdo y Derecho)
+      const rightLens = new THREE.Mesh(createCurvedLensGeometry(1, style), materials.lens);
+      rightLens.position.z = -0.01;
+      const leftLens = new THREE.Mesh(createCurvedLensGeometry(-1, style), materials.lens);
+      leftLens.position.z = -0.01;
+      root.add(rightLens, leftLens);
+
+      // 3. PATILLAS ARTICULADAS CON CURVATURA ANATÓMICA
+      const templeShape = new THREE.Shape();
+      // Perfil lateral de la patilla (eje X = hacia atrás, eje Y = altura)
+      templeShape.moveTo(0, 0.11);
+      templeShape.lineTo(1.85, 0.065);
+      // Curva ergonómica sobre la oreja
+      templeShape.bezierCurveTo(2.25, 0.055, 2.48, -0.05, 2.66, -0.34);
+      templeShape.bezierCurveTo(2.74, -0.47, 2.84, -0.58, 2.94, -0.60);
+      // Punta redondeada de la terminal
+      templeShape.bezierCurveTo(3.01, -0.61, 3.03, -0.52, 2.97, -0.44);
+      // Borde inferior volviendo hacia la bisagra
+      templeShape.bezierCurveTo(2.85, -0.27, 2.68, -0.08, 2.42, -0.02);
+      templeShape.bezierCurveTo(2.15, 0.04, 1.92, -0.03, 1.62, -0.045);
+      templeShape.lineTo(0, -0.085);
+      templeShape.closePath();
+
+      const templeGeo = new THREE.ExtrudeGeometry(templeShape, {
+        depth: 0.052,
+        bevelEnabled: true,
+        bevelThickness: 0.018,
+        bevelSize: 0.014,
+        bevelSegments: 5,
+        curveSegments: 32
+      });
+      templeGeo.translate(0, 0, -0.026);
+      // Rotamos para que se extienda hacia -Z (hacia atrás del frente)
+      templeGeo.rotateY(Math.PI / 2);
+
+      // Patilla Derecha
+      const rightTemple = new THREE.Mesh(templeGeo, materials.frame);
+      rightTemple.position.set(1.72, 0.33, -0.10);
+      rightTemple.rotation.y = 0.065; // Sutil apertura natural
+      root.add(rightTemple);
+
+      // Patilla Izquierda
+      const leftTemple = new THREE.Mesh(templeGeo, materials.frame);
+      leftTemple.position.set(-1.72, 0.33, -0.10);
+      leftTemple.rotation.y = -0.065;
+      root.add(leftTemple);
+
+      // 4. DETALLES DE PRECISIÓN: REMACHES FRONTALES & BISAGRAS METÁLICAS
+      const rivetGeo = new THREE.CylinderGeometry(0.021, 0.021, 0.02, 16);
+      rivetGeo.rotateX(Math.PI / 2);
+
+      const hingePlateGeo = new THREE.BoxGeometry(0.06, 0.14, 0.14);
+      const hingePinGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.15, 16);
+
+      [-1, 1].forEach((side) => {
+        // Dos remaches discretos en cada codo frontal
+        const r1 = new THREE.Mesh(rivetGeo, materials.metal);
+        r1.position.set(side * 1.68, 0.36, 0.086);
+        const r2 = new THREE.Mesh(rivetGeo, materials.metal);
+        r2.position.set(side * 1.75, 0.36, 0.086);
+        root.add(r1, r2);
+
+        // Bisagra interna (placa + cilindro)
+        const hingePlate = new THREE.Mesh(hingePlateGeo, materials.metal);
+        hingePlate.position.set(side * 1.66, 0.33, -0.09);
+        const hingePin = new THREE.Mesh(hingePinGeo, materials.metal);
+        hingePin.position.set(side * 1.68, 0.33, -0.13);
+        root.add(hingePlate, hingePin);
+
+        // 5. PLAQUETAS NASALES TRANSLÚCIDAS CON SOPORTE METÁLICO FINO
+        const armCurve = new THREE.CatmullRomCurve3([
+          new THREE.Vector3(side * 0.21, 0.08, -0.06),
+          new THREE.Vector3(side * 0.23, 0.02, -0.16),
+          new THREE.Vector3(side * 0.17, -0.05, -0.21)
+        ]);
+        const armGeo = new THREE.TubeGeometry(armCurve, 14, 0.011, 8, false);
+        const padArm = new THREE.Mesh(armGeo, materials.metal);
+        root.add(padArm);
+
+        // Plaqueta ergonómica de silicona
+        const padGeo = new THREE.SphereGeometry(0.08, 20, 16);
+        padGeo.scale(0.32, 1.25, 0.65);
+        const nosePad = new THREE.Mesh(padGeo, materials.nosePad);
+        nosePad.position.set(side * 0.165, -0.05, -0.22);
+        nosePad.rotation.set(0.15, side * -0.45, side * 0.18);
+        root.add(nosePad);
+      });
+
+      // Centrar ópticamente el conjunto dejando margen libre para el giro de las patillas
+      root.position.set(0, 0.06, 0.45);
+      return root;
+    }
+
+    /**
+     * Genera la textura tipográfica con "ÓPTICA REYES" sobre la fotografía libre
+     * de derechos del tanque de agua de Monte Grande (Wikimedia Commons, con CORS habilitado).
+     * Incluye respaldo inmediato en alabastro mientras descarga la foto.
+     */
+    function createBackdropTextTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 2048;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+
+      let loadedPhoto = null;
+
+      const drawBackdrop = () => {
+        ctx.save();
+        if (loadedPhoto) {
+          // Ajuste tipo "cover" centrado en la silueta del tanque de agua de Monte Grande
+          const imgRatio = loadedPhoto.width / loadedPhoto.height;
+          const canvasRatio = canvas.width / canvas.height;
+          let drawW, drawH, offsetX, offsetY;
+
+          if (imgRatio > canvasRatio) {
+            drawH = canvas.height;
+            drawW = canvas.height * imgRatio;
+            offsetX = (canvas.width - drawW) * 0.5;
+            offsetY = 0;
+          } else {
+            drawW = canvas.width;
+            drawH = canvas.width / imgRatio;
+            offsetX = 0;
+            offsetY = (canvas.height - drawH) * 0.36;
+          }
+
+          ctx.drawImage(loadedPhoto, offsetX, offsetY, drawW, drawH);
+
+          // Veladura atmosférica suave para realzar el contraste con las letras blancas
+          const shade = ctx.createLinearGradient(0, 0, 0, canvas.height);
+          shade.addColorStop(0, 'rgba(18, 18, 16, 0.22)');
+          shade.addColorStop(0.5, 'rgba(18, 18, 16, 0.32)');
+          shade.addColorStop(1, 'rgba(18, 18, 16, 0.45)');
+          ctx.fillStyle = shade;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = '#FFFFFF';
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
+          ctx.shadowBlur = 26;
+          ctx.shadowOffsetY = 6;
+        } else {
+          ctx.fillStyle = '#F5F5F3';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#141414';
+        }
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = '600 132px "Playfair Display", Georgia, serif';
+        if ('letterSpacing' in ctx) {
+          ctx.letterSpacing = '18px';
+        }
+        ctx.fillText('ÓPTICA REYES', canvas.width / 2, canvas.height / 2);
+        ctx.restore();
+
+        texture.needsUpdate = true;
+      };
+
+      drawBackdrop();
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(drawBackdrop);
+      }
+
+      // Carga con CORS habilitado desde Wikimedia Commons (Tanque de agua de Monte Grande)
+      const fileTitle = 'File:Monte_grande_tanque_de_agua_de_la_plaza_Enrique_Santamarina_-_Diaz_De_Vivar_Gustavo.jpg';
+      const fallbackImageUrl = 'https://commons.wikimedia.org/wiki/Special:FilePath/Monte_grande_tanque_de_agua_de_la_plaza_Enrique_Santamarina_-_Diaz_De_Vivar_Gustavo.jpg?width=1600';
+
+      const loadExternalPhoto = (url) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          loadedPhoto = img;
+          drawBackdrop();
+        };
+        img.onerror = () => {
+          if (url !== fallbackImageUrl) {
+            loadExternalPhoto(fallbackImageUrl);
+          }
+        };
+        img.src = url;
+      };
+
+      fetch(`https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(fileTitle)}&prop=imageinfo&iiprop=url&iiurlwidth=1600&format=json&origin=*`)
+        .then((res) => res.json())
+        .then((data) => {
+          const pages = data?.query?.pages || {};
+          const page = Object.values(pages)[0];
+          const directUrl = page?.imageinfo?.[0]?.thumburl || page?.imageinfo?.[0]?.url || fallbackImageUrl;
+          loadExternalPhoto(directUrl);
+        })
+        .catch(() => {
+          loadExternalPhoto(fallbackImageUrl);
+        });
+
+      return texture;
+    }
+
+    /**
+     * Genera una textura procedural de acetato Carey (tortoiseshell) con vetas cálidas
+     * ámbar, miel y marrón profundo para el acabado clásico del armazón.
+     */
+    function createTortoiseTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#5a2d12';
+      ctx.fillRect(0, 0, 512, 512);
+
+      const palette = [
+        'rgba(212, 134, 46, 0.55)',
+        'rgba(184, 98, 24, 0.60)',
+        'rgba(235, 168, 72, 0.42)',
+        'rgba(42, 18, 6, 0.72)',
+        'rgba(28, 12, 4, 0.80)'
+      ];
+
+      let seed = 42;
+      const rand = () => {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+      };
+
+      for (let i = 0; i < 160; i++) {
+        const x = rand() * 512;
+        const y = rand() * 512;
+        const rx = 18 + rand() * 58;
+        const ry = 12 + rand() * 42;
+        const angle = rand() * Math.PI * 2;
+        const color = palette[Math.floor(rand() * palette.length)];
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(1.5, 1.5);
+      return texture;
+    }
+
+    /**
+     * Inicializa la escena completa de Three.js, iluminación de estudio y controles.
+     */
+    function initHero3D() {
+      const container = document.getElementById('hero-canvas-container');
+      const loaderEl = document.getElementById('webgl-loader');
+      const fallbackEl = document.getElementById('webgl-fallback');
+      if (!container) return;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color('#F5F5F3');
+
+      const initialWidth = container.clientWidth || window.innerWidth;
+      const initialHeight = container.clientHeight || window.innerHeight;
+      const camera = new THREE.PerspectiveCamera(34, initialWidth / initialHeight, 0.1, 100);
+
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({
+          antialias: true,
+          alpha: false,
+          powerPreference: 'high-performance'
+        });
+      } catch (error) {
+        console.error('WebGL no disponible:', error);
+        if (loaderEl) loaderEl.style.display = 'none';
+        if (fallbackEl) fallbackEl.classList.remove('hidden');
+        return;
+      }
+
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(initialWidth, initialHeight);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.04;
+      container.appendChild(renderer.domElement);
+
+      // Entorno de estudio suave para reflejos realistas en cristales y herrajes
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      const roomEnv = new RoomEnvironment();
+      const envRT = pmremGenerator.fromScene(roomEnv, 0.04);
+      scene.environment = envRT.texture;
+      roomEnv.dispose();
+      pmremGenerator.dispose();
+
+      // Ajuste responsivo de cámara para escritorio y móviles
+      const updateCameraLayout = () => {
+        const w = container.clientWidth || window.innerWidth;
+        const h = container.clientHeight || window.innerHeight;
+        const aspect = w / Math.max(h, 1);
+
+        camera.aspect = aspect;
+        camera.position.z = aspect < 1
+          ? THREE.MathUtils.clamp(6.6 / Math.max(aspect, 0.52), 6.6, 11.2)
+          : 6.6;
+        camera.position.y = 0.04;
+        camera.updateProjectionMatrix();
+
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setSize(w, h);
+      };
+      updateCameraLayout();
+
+      // Iluminación editorial equilibrada
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+      scene.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.25);
+      keyLight.position.set(3.5, 4.5, 5.5);
+      scene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0xdbece6, 0.6);
+      fillLight.position.set(-4.0, 1.5, 3.5);
+      scene.add(fillLight);
+
+      const rimLight = new THREE.DirectionalLight(0xffe7c4, 0.85);
+      rimLight.position.set(0, 4, -4.5);
+      scene.add(rimLight);
+
+      // PLANO DE FONDO CON FOTO DE MONTE GRANDE Y "ÓPTICA REYES" DETRÁS DE LAS PATILLAS
+      const backdropTexture = createBackdropTextTexture();
+      const backdropGeo = new THREE.PlaneGeometry(11.6, 5.8);
+      const backdropMat = new THREE.MeshBasicMaterial({
+        map: backdropTexture,
+        toneMapped: false
+      });
+      const backdropMesh = new THREE.Mesh(backdropGeo, backdropMat);
+      backdropMesh.position.set(0, 0.04, -3.65);
+      scene.add(backdropMesh);
+
+      // MATERIALES PBR DEL ARMAZÓN, CRISTALES Y HERRAJES
+      const tortoiseMap = createTortoiseTexture();
+
+      const frameMaterial = new THREE.MeshPhysicalMaterial({
+        map: tortoiseMap,
+        color: '#ffffff',
+        roughness: 0.16,
+        metalness: 0.04,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.07,
+        envMapIntensity: 1.15
+      });
+
+      const lensMaterial = new THREE.MeshPhysicalMaterial({
+        color: '#ffffff',
+        transmission: 0.96,
+        ior: 1.52,
+        thickness: 0.45,
+        roughness: 0.04,
+        metalness: 0.0,
+        attenuationColor: new THREE.Color('#eefaf5'),
+        attenuationDistance: 4.5,
+        specularIntensity: 1.0,
+        specularColor: new THREE.Color('#8be3c8'),
+        envMapIntensity: 1.2,
+        side: THREE.DoubleSide
+      });
+
+      const metalMaterial = new THREE.MeshStandardMaterial({
+        color: '#cbb07f',
+        roughness: 0.24,
+        metalness: 0.92,
+        envMapIntensity: 1.25
+      });
+
+      const nosePadMaterial = new THREE.MeshPhysicalMaterial({
+        color: '#f4f2ed',
+        transmission: 0.72,
+        ior: 1.44,
+        thickness: 0.12,
+        roughness: 0.22,
+        metalness: 0.0
+      });
+
+      // CONSTRUIR Y AGREGAR ANTEOJOS A LA ESCENA CON CARRUSEL DE PANEO (CADA 5s)
+      const sharedMaterials = {
+        frame: frameMaterial,
+        lens: lensMaterial,
+        metal: metalMaterial,
+        nosePad: nosePadMaterial
+      };
+
+      const modelPresets = [
+        { finish: 'carey', style: 'panto' },
+        { finish: 'negro', style: 'rectangular' },
+        { finish: 'dorado', style: 'round' }
+      ];
+
+      // Grupo contenedor para el desplazamiento horizontal (paneo izquierda/derecha)
+      const carouselGroup = new THREE.Group();
+      scene.add(carouselGroup);
+
+      // Grupo interno para la rotación horizontal continua y la flotación
+      const glassesGroup = new THREE.Group();
+      carouselGroup.add(glassesGroup);
+
+      // Pre-construimos los 3 modelos para alternarlos sin tirones durante el paneo
+      const modelGroups = modelPresets.map((preset, idx) => {
+        const group = buildGlassesModel(sharedMaterials, preset.style);
+        group.visible = idx === 0;
+        glassesGroup.add(group);
+        return group;
+      });
+
+      let activeModelIdx = 0;
+      let pendingModelIdx = 1;
+      let transitionState = 'idle'; // 'idle' | 'panOut' | 'panIn'
+      let transitionProgress = 0;
+      let cycleTimer = 0;
+      const CYCLE_INTERVAL = 5.0;
+      const PAN_OUT_DURATION = 0.65;
+      const PAN_IN_DURATION = 0.75;
+
+      // Calcula la distancia horizontal segura para salir/entrar fuera de pantalla según el aspecto
+      const getOffscreenX = () => {
+        const halfFovRad = THREE.MathUtils.degToRad(camera.fov * 0.5);
+        const visibleHalfWidth = camera.position.z * Math.tan(halfFovRad) * camera.aspect;
+        return visibleHalfWidth + 2.6;
+      };
+
+      // Inicia la transición en paneo hacia la izquierda para dar paso al siguiente modelo por la derecha
+      const startModelTransition = (nextIdx) => {
+        if (transitionState !== 'idle' || nextIdx === activeModelIdx) return;
+        pendingModelIdx = nextIdx;
+        transitionState = 'panOut';
+        transitionProgress = 0;
+      };
+
+      // FUNCIONES PARA CAMBIAR ACABADOS EN VIVO
+      const applyFrameFinish = (finish, triggerPan = false) => {
+        if (triggerPan) {
+          const targetIdx = modelPresets.findIndex((m) => m.finish === finish);
+          if (targetIdx !== -1 && targetIdx !== activeModelIdx) {
+            if (transitionState === 'idle') {
+              startModelTransition(targetIdx);
+              return;
+            }
+          } else if (targetIdx === activeModelIdx && transitionState === 'idle') {
+            cycleTimer = 0;
+          }
+        }
+
+        if (finish === 'carey') {
+          frameMaterial.map = tortoiseMap;
+          frameMaterial.color.set('#ffffff');
+          frameMaterial.roughness = 0.16;
+          frameMaterial.metalness = 0.04;
+          frameMaterial.clearcoat = 1.0;
+          frameMaterial.clearcoatRoughness = 0.07;
+          metalMaterial.color.set('#cbb07f');
+        } else if (finish === 'negro') {
+          frameMaterial.map = null;
+          frameMaterial.color.set('#18181a');
+          frameMaterial.roughness = 0.46;
+          frameMaterial.metalness = 0.08;
+          frameMaterial.clearcoat = 0.18;
+          frameMaterial.clearcoatRoughness = 0.35;
+          metalMaterial.color.set('#b8bcc0');
+        } else if (finish === 'dorado') {
+          frameMaterial.map = null;
+          frameMaterial.color.set('#d2b47c');
+          frameMaterial.roughness = 0.23;
+          frameMaterial.metalness = 0.94;
+          frameMaterial.clearcoat = 0.35;
+          frameMaterial.clearcoatRoughness = 0.18;
+          metalMaterial.color.set('#e2c994');
+        }
+        frameMaterial.needsUpdate = true;
+
+        // Actualizar estado visual de los botones
+        document.querySelectorAll('.finish-btn').forEach((btn) => {
+          const isActive = btn.dataset.finish === finish;
+          btn.classList.toggle('bg-charcoal', isActive);
+          btn.classList.toggle('text-alabaster', isActive);
+          btn.classList.toggle('text-charcoal/75', !isActive);
+        });
+      };
+
+      const applyLensMode = (mode) => {
+        if (mode === 'claro') {
+          lensMaterial.color.set('#ffffff');
+          lensMaterial.transmission = 0.96;
+          lensMaterial.thickness = 0.45;
+          lensMaterial.roughness = 0.04;
+          lensMaterial.attenuationColor.set('#eefaf5');
+          lensMaterial.attenuationDistance = 4.5;
+          lensMaterial.specularColor.set('#8be3c8');
+        } else if (mode === 'sol') {
+          lensMaterial.color.set('#22352f');
+          lensMaterial.transmission = 0.42;
+          lensMaterial.thickness = 0.35;
+          lensMaterial.roughness = 0.05;
+          lensMaterial.attenuationColor.set('#0e1f19');
+          lensMaterial.attenuationDistance = 0.55;
+          lensMaterial.specularColor.set('#b7d6cc');
+        }
+        lensMaterial.needsUpdate = true;
+
+        document.querySelectorAll('.lens-btn').forEach((btn) => {
+          const isActive = btn.dataset.lens === mode;
+          btn.classList.toggle('bg-optical', isActive);
+          btn.classList.toggle('text-alabaster', isActive);
+          btn.classList.toggle('text-charcoal/75', !isActive);
+        });
+      };
+
+      // Conectar botones del Hero
+      document.querySelectorAll('.finish-btn').forEach((btn) => {
+        btn.addEventListener('click', () => applyFrameFinish(btn.dataset.finish, true));
+      });
+      document.querySelectorAll('.lens-btn').forEach((btn) => {
+        btn.addEventListener('click', () => applyLensMode(btn.dataset.lens));
+      });
+
+      // INTERACCIÓN: PARALLAX DE MOUSE + ARRASTRE SUAVE PARA INSPECCIONAR
+      let isDragging = false;
+      let prevX = 0;
+      let prevY = 0;
+      let targetDragY = 0;
+      let targetDragX = 0;
+      let currentDragY = 0;
+      let currentDragX = 0;
+      let pointerNormX = 0;
+      let pointerNormY = 0;
+
+      const domEl = renderer.domElement;
+
+      const onPointerDown = (clientX, clientY) => {
+        isDragging = true;
+        prevX = clientX;
+        prevY = clientY;
+      };
+
+      const onPointerMove = (clientX, clientY) => {
+        const rect = domEl.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          pointerNormX = ((clientX - rect.left) / rect.width) * 2 - 1;
+          pointerNormY = ((clientY - rect.top) / rect.height) * 2 - 1;
+        }
+
+        if (!isDragging) return;
+        const dx = clientX - prevX;
+        const dy = clientY - prevY;
+        prevX = clientX;
+        prevY = clientY;
+
+        targetDragY = THREE.MathUtils.clamp(targetDragY + dx * 0.006, -0.85, 0.85);
+        targetDragX = THREE.MathUtils.clamp(targetDragX + dy * 0.004, -0.35, 0.35);
+      };
+
+      const onPointerUp = () => {
+        isDragging = false;
+      };
+
+      // Eventos de mouse
+      domEl.addEventListener('mousedown', (e) => onPointerDown(e.clientX, e.clientY));
+      window.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
+      window.addEventListener('mouseup', onPointerUp);
+
+      // Eventos táctiles
+      domEl.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches.length === 1) {
+          onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchend', onPointerUp);
+
+      // Ajuste responsivo al cambiar el tamaño de la ventana
+      window.addEventListener('resize', updateCameraLayout);
+
+      // BUCLE DE ANIMACIÓN: PANEO CADA 5s + ROTACIÓN HORIZONTAL CONTINUA + PARALLAX
+      const clock = new THREE.Clock();
+      let loaderHidden = false;
+      let prevElapsed = 0;
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const elapsed = clock.getElapsedTime();
+        const dt = Math.min(elapsed - prevElapsed, 0.1);
+        prevElapsed = elapsed;
+
+        const offscreenX = getOffscreenX();
+
+        // Máquina de estados para el paneo horizontal cada 5 segundos
+        if (transitionState === 'idle') {
+          carouselGroup.position.x = 0;
+          carouselGroup.rotation.z = 0;
+
+          if (!isDragging) {
+            cycleTimer += dt;
+            if (cycleTimer >= CYCLE_INTERVAL) {
+              startModelTransition((activeModelIdx + 1) % modelPresets.length);
+            }
+          }
+        } else if (transitionState === 'panOut') {
+          // Salida en paneo hacia la izquierda (ease-in cúbico)
+          transitionProgress += dt / PAN_OUT_DURATION;
+          if (transitionProgress >= 1) {
+            modelGroups[activeModelIdx].visible = false;
+            activeModelIdx = pendingModelIdx;
+            modelGroups[activeModelIdx].visible = true;
+            applyFrameFinish(modelPresets[activeModelIdx].finish, false);
+
+            carouselGroup.position.x = offscreenX;
+            transitionState = 'panIn';
+            transitionProgress = 0;
+          } else {
+            const easeOutLeft = transitionProgress * transitionProgress * transitionProgress;
+            carouselGroup.position.x = -offscreenX * easeOutLeft;
+            carouselGroup.rotation.z = 0.055 * easeOutLeft;
+          }
+        } else if (transitionState === 'panIn') {
+          // Entrada del siguiente modelo en paneo desde la derecha (ease-out cuártico)
+          transitionProgress += dt / PAN_IN_DURATION;
+          if (transitionProgress >= 1) {
+            carouselGroup.position.x = 0;
+            carouselGroup.rotation.z = 0;
+            transitionState = 'idle';
+            transitionProgress = 0;
+            cycleTimer = 0;
+          } else {
+            const easeInRight = 1 - Math.pow(1 - transitionProgress, 4);
+            carouselGroup.position.x = offscreenX * (1 - easeInRight);
+            carouselGroup.rotation.z = -0.045 * (1 - easeInRight);
+          }
+        }
+
+        // Retorno elástico muy suave cuando el usuario suelta el arrastre
+        if (!isDragging) {
+          targetDragY *= 0.985;
+          targetDragX *= 0.985;
+        }
+
+        currentDragY += (targetDragY - currentDragY) * 0.08;
+        currentDragX += (targetDragX - currentDragX) * 0.08;
+
+        // Oscilación horizontal continua (aprox. ±23°) + parallax sutil
+        const baseOscillationY = Math.sin(elapsed * 0.55) * 0.4;
+        const parallaxY = pointerNormX * 0.1;
+        const parallaxX = pointerNormY * 0.06;
+
+        glassesGroup.rotation.y = baseOscillationY + parallaxY + currentDragY;
+        glassesGroup.rotation.x = parallaxX + currentDragX + Math.sin(elapsed * 0.4) * 0.025;
+        glassesGroup.position.y = Math.sin(elapsed * 0.9) * 0.03;
+
+        renderer.render(scene, camera);
+
+        // Ocultar el loader en el primer frame renderizado
+        if (!loaderHidden && loaderEl) {
+          loaderHidden = true;
+          loaderEl.style.opacity = '0';
+          setTimeout(() => {
+            loaderEl.style.display = 'none';
+          }, 700);
+        }
+      }
+
+      animate();
+    }
+
+    /**
+     * Inicializa interacciones generales de la UI (navbar, menú móvil y revelado al scroll).
+     */
+    function initUI() {
+      const navbar = document.getElementById('navbar');
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      // Efecto de fondo en la barra de navegación al hacer scroll
+      const handleScroll = () => {
+        if (!navbar) return;
+        navbar.classList.toggle('nav-scrolled', window.scrollY > 24);
+      };
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      handleScroll();
+
+      // Menú desplegable en dispositivos móviles
+      if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileMenu.querySelectorAll('.mobile-link').forEach((link) => {
+          link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+          });
+        });
+      }
+
+      // Animación de aparición suave para secciones con clase .reveal
+      const revealEls = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.15 }
+        );
+        revealEls.forEach((el) => observer.observe(el));
+      } else {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
+      }
+    }
+
+    // Iniciar la escena 3D y la UI cuando la ventana termine de cargar
+    const boot = () => {
+      initUI();
+      initHero3D();
+    };
+
+    if (document.readyState === 'complete') {
+      boot();
+    } else {
+      window.addEventListener('load', boot);
+    }
+  </script>
+</body>
+</html>
